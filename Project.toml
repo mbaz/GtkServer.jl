@@ -1,0 +1,7 @@
+name = "GtkServer"
+uuid = "86f7fc17-3ff4-4864-b5b2-427896e17e59"
+authors = ["Miguel Bazdresch <miguelb@2pif.info>"]
+version = "0.1.0"
+
+[deps]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
