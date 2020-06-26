@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <!-- META -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="author" content="Miguel Bazdresch">
+  <title>GtkServer.jl</title>
+
+  <link rel="icon" type="image/png"  href="/assets/favicon.ico">
+
+  <!-- CSS -->
+  
+   <link rel="stylesheet" href="/libs/highlight/styles/atom-one-dark.css">
+   
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
+  <style>.bg-primary {
+  background-color: #3f6388 !important;
+}
+
+a {
+  color: #2669DD;
+}
+
+a:hover {
+  color: teal;
+}
+
+.section-bg-color {
+  background-color: #f6f8fa;
+}
+
+footer a {
+  color: cornflowerblue;
+}
+
+
+header {
+  margin-top: 55px !important;
+}
+
+
+
+.jumbotron {
+  background-image: url("assets/diagonal-lines.svg");
+  background-repeat: repeat;
+}
+
+
+/* CODE ADJUSTMENTS */
+
+pre code.hljs {
+  border-radius: 10px;
+}
+
+pre code.hljs.plaintext {
+  margin-left: 15px;
+}
+</style>
+  <link rel="stylesheet" href="/css/custom.css">
+
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+</head>
+<body id="page-top">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
+  <div class="container">
+    <span class="navbar-brand">
+      
+        <img src="/assets/logo.svg" class="img-fluid" style="max-height:     25px;
+padding-right:  10px;
+" alt="Logo"/>
+      
+      <a href="#page-top">GtkServer.jl</a>
+      
+    </span>
+    <input type="checkbox" id="navbar-toggler-cbox" class="d-none" />
+    <label for="navbar-toggler-cbox" class="navbar-toggler" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </label>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item">
+          <a class="nav-link" href="#about">About</a>
+        </li>
+        
+        <li class="nav-item">
+          <a class="nav-link" href="#getting_started">Getting started</a>
+        </li>
+        
+        <li class="nav-item">
+          <a class="nav-link" href="#included_demos">Included demos</a>
+        </li>
+        
+        <li class="nav-item">
+          <a class="nav-link" href="#contributing">Contributing</a>
+        </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  <header class="text-white text-center">
+  
+    <div class="jumbotron jumbotron-fluid container-fluid bg-primary">
+  
+    <h1>GtkServer.jl</h1>
+    <div class="lead">Add a GUI to your Julia scripts with a streaming interface to GTK.
+</div>
+    
+      <a class="github-button" href="https://github.com/mbaz/Gtkserver.jl" data-size="large" aria-label="View GtkServer.jl on GitHub">View on GitHub</a>
+    
+    
+  </div>
+</header>
+
+  <!-- Content appended here -->
+<div class="franklin-content"><section id="about" class="scrollspy">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-10 mx-auto">
+        <h2>
+          About GtkServer
+        </h2>
+
+<p>GtkServer.jl is a Julia front-end for <a href="https://www.gtk-server.org/intro.html">gtk-server</a>, a stream-oriented interface to GTK. With GtkServer.jl, it is very easy to add simple GUIs to Julia programs.</p>
+<p>GtkServer.jl started life in 2012, when no other GUI options existed for Julia &#40;see the original repository: <a href="https://bitbucket.org/mbaz/gtkjl/src/default/">https://bitbucket.org/mbaz/gtkjl/src/default/</a>&#41;. After re-discovering this code in 2020, I decided to dust it off and polish it a bit. Even though <a href="https://github.com/JuliaGraphics/Gtk.jl">Gtk.jl</a> essentially makes GtkServer.jl obsolete, it might still be useful in <a href="https://github.com/JuliaGraphics/Gtk.jl/issues/325">platforms where Gtk.jl is slow</a>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="getting_started" class="scrollspy section-bg-color">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-10 mx-auto">
+        <h2>
+          Getting started
+        </h2>
+
+<p>In order to get started, install <code>gtk-server</code> on your platform; there are instructions <a href="https://www.gtk-server.org/download.html">here</a>. If there is no binary package for your platform, you may have to compile it yourself. This is very easy, at least on Linux; it&#39;s just a matter of running the usual <code>./configure &amp;&amp; make &amp;&amp; sudo make install</code> routine.</p>
+<p>Once <code>gtk-server</code> is installed, add the package &#40;with <strong>Julia ≥ 1.0.5</strong>&#41;, and get a nice button to click on with:</p>
+<pre><code class="language-julia-repl">using GtkServer
+gtk_init()  # Initialize gtk-server
+gtk_send("gtk_init NULL NULL")
+win = gtk_send("gtk_window_new 0")
+ok = gtk_send("gtk_button_new_with_label 'OK'")
+tbl = gtk_send("gtk_table_new 3 3 1")
+gtk_send("gtk_container_add $win $tbl")
+gtk_send("gtk_table_attach_defaults $tbl $ok 1 2 1 2")
+gtk_send("gtk_widget_show_all $win")
+while true
+    event = gtk_send("gtk_server_callback WAIT")
+    if event == ok
+        break
+    end
+end
+gtk_exit()  # shut gtk-server down</code></pre>
+<br/>
+<p>The <code>gtk_init&#40;&#41;</code> call starts a gtk-server instance and establishes a two-way communication channel to it via stdin/stdout. <code>gtk_send</code> sends a command to <code>gtk-server</code>; the response is either <code>&quot;ok\n&quot;</code>, or a widget or event id. The call <code>gtk_send&#40;&quot;gtk_server_callback WAIT&quot;&#41;</code> blocks until there is an event in the GUI, and returns the event. Finally, <code>gtk_exit&#40;&#41;</code> shuts down the server and tears down the communication channel.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="included_demos" class="scrollspy">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-10 mx-auto">
+        <h2>
+          Included demos
+        </h2>
+
+<p>The package includes three demos &#40;in the folder <code>demos/</code>&#41;. These can be run by doing <code>include&#40;&quot;demo/&lt;name&gt;&quot;&#41;</code> from the package source directory.</p>
+<ul>
+<li><p><code>helloworld.jl</code> is a simple demo with a few buttons.</p>
+</li>
+</ul>
+<figure class="figure">
+  <img src="/assets/GtkServerHelloWorldDemo.png" alt="" class="figure-img img-fluid " width="" >
+  
+</figure>
+
+<ul>
+<li><p><code>fourier.jl</code> is an iteractive demo, using sliders, of the Fourier analysis of a sine wave. It relies on the plotting package <a href="https://github.com/mbaz/Gaston.jl">Gaston.jl</a>, but it should be pretty easy to adapt it to other packages. After <code>include</code>ing the code, run <code>demo&#40;&#41;</code>.</p>
+</li>
+</ul>
+<figure class="figure">
+  <img src="/assets/GtkServerFourierDemo.gif" alt="" class="figure-img img-fluid " width="" >
+  
+</figure>
+
+<ul>
+<li><p><code>mandelbrot.jl</code> is a &#40;slow&#33;&#41; Mandelbrot set viewer:</p>
+</li>
+</ul>
+<figure class="figure">
+  <img src="/assets/mandel.png" alt="" class="figure-img img-fluid " width="" >
+  
+</figure>
+
+<p>You can even even specify the <code>x</code> and <code>y</code> ranges to plot, the number of iterations and radius,  and the color palette. See the code for details.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contributing" class="scrollspy section-bg-color">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-10 mx-auto">
+        <h2>
+          Contributing
+        </h2>
+
+<p>Issues and pull requests are welcome. I am particulary interested in:</p>
+<ul>
+<li><p>Instructions to install <code>gtk-server</code> on Windows, MacOS and different Linux distributions.</p>
+</li>
+<li><p>Improvement to the Mandelbrot demo, to make it faster and/or more flexible.</p>
+</li>
+<li><p>More demos&#33; An ideal demo is short, well commented, and shows how to use one or more GTK features.</p>
+</li>
+</ul>
+      </div>
+    </div>
+  </div>
+</section>
+<footer class="py-5 bg-dark">
+  <div class="container">
+    <p class="m-0 text-center text-white">&copy; Miguel Bazdresch. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and <a href="https://github.com/tlienart/PkgPage.jl">PkgPage.jl</a>.</p>
+  </div>
+</footer>
+</div><!-- CONTENT ENDS HERE -->
+  
+  
+      <script src="/libs/highlight/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();hljs.configure({tabReplace: '    '});</script>
+
+  
+  <script src="/libs/simple-scrollspy.min.js"></script>
+  <script>
+  window.onload = function () {
+    scrollSpy('#navbarResponsive', {
+      sectionClass: '.scrollspy',
+      menuActiveTarget: '.nav-link',
+      offset: 100
+    })
+  }
+  </script>
+  </body>
+</html>
