@@ -5,7 +5,7 @@ GtkServer: A simple front-end to GTK
 
 See the documentation [here]().
 
-To quickly see examples of GtkServer in action, see the [three included demos]().
+To quickly see examples of GtkServer in action, see the [three included demos](https://github.com/mbaz/GtkServer.jl/tree/master/demo).
 
 Tutorial
 --------
@@ -47,4 +47,4 @@ Finally, wrap things up with `gtk_exit()`.
 
 This example produces a button like this:
 
-
+![](examplebutton.png)
