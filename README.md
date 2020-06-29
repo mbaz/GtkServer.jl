@@ -3,7 +3,7 @@ GtkServer: A simple front-end to GTK
 
 [gtk-server](https://www.gtk-server.org/) provides a stream-oriented interface to the GTK library. It may be the easiest way to create simple GUIs for Julia programs.
 
-See the documentation [here]().
+See the documentation [here](https://mbaz.github.io/GtkServer.jl/).
 
 To quickly see examples of GtkServer in action, see the [three included demos](https://github.com/mbaz/GtkServer.jl/tree/master/demo).
 
