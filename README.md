@@ -47,4 +47,4 @@ Finally, wrap things up with `gtk_exit()`.
 
 This example produces a button like this:
 
-![](mbaz.github.io/GtkServer.jl/assets/examplebutton.png)
+![example](https://github.com/mbaz/GtkServer.jl/blob/gh-pages/assets/GtkServerHelloWorldDemo.png)
